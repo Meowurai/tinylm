@@ -17,6 +17,10 @@ class CountLanguageModel:
             target_counts = self.next_token_count[context_key]
             target_counts[target] = target_counts.get(target, 0) + 1
 
+    def predict_counts(self, context: list[int]) -> dict[int, int]:
+        context_key = tuple(context)
+        return dict(self.next_token_count.get(context_key, {}))
+
 
 if __name__ == "__main__":
     model = CountLanguageModel()
@@ -33,4 +37,5 @@ if __name__ == "__main__":
 
     model.fit(data)
 
-    print(model.next_token_count)
+    prediction = model.predict_counts([1, 0])
+    print(prediction)
