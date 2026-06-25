@@ -20,6 +20,15 @@ class CountLanguageModel:
     def predict_counts(self, context: list[int]) -> dict[int, int]:
         context_key = tuple(context)
         return dict(self.next_token_count.get(context_key, {}))
+    
+    def predict_probabilities(self, context: list[int]):
+        counts = self.predict_counts(context)
+        total_count = sum(counts.values())
+
+        return {
+            key: value / total_count        # predict count can't be empty so no need to handle zero div
+            for key, value in counts.items()
+        }
 
 
 if __name__ == "__main__":
@@ -39,3 +48,8 @@ if __name__ == "__main__":
 
     prediction = model.predict_counts([1, 0])
     print(prediction)
+    prob = model.predict_probabilities([1, 0])
+    print(prob)
+
+    prob_unknown = model.predict_probabilities([4,3])
+    print(prob_unknown)

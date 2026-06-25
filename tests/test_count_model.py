@@ -44,3 +44,29 @@ def test_predict_counts_for_unseen_context_returns_empty_dict():
     model.fit(examples)
 
     assert model.predict_counts([9, 9]) == {}
+
+
+def test_predict_probabilities_normalizes_counts():
+    model = CountLanguageModel()
+
+    model.fit([
+        ([0, 1], 2),
+        ([0, 1], 2),
+        ([0, 1], 3),
+    ])
+
+    assert model.predict_probabilities([0, 1]) == {
+        2: 2 / 3,
+        3: 1 / 3,
+    }
+
+def test_predict_probabilities_unknown_context():
+    model = CountLanguageModel()
+
+    model.fit([
+        ([0, 1], 2),
+        ([0, 1], 2),
+        ([0, 1], 3),
+    ])
+
+    assert model.predict_probabilities([4, 1]) == {}
