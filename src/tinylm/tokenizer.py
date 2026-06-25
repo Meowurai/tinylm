@@ -5,49 +5,46 @@
 # It can encode text into IDs and decode IDs back into text.
 
 class Tokenizer:
-    def __init__(self) -> None:
-        self.vocabulary: dict[str, int] = {}
+    def __init__(self, token_to_id: dict[str, int]) -> None:
+        self.token_to_id = token_to_id
+        self.id_to_token = {
+            id: token
+            for token, id in token_to_id.items()
+        }
 
     @property
     def vocabulary_size(self) -> int:
-        return len(self.vocabulary)
+        return len(self.token_to_id)
 
-    def from_text(self, text: str):
-        tokens = ['<START>', *text]
+    @classmethod
+    def from_text(cls, text: str) -> "Tokenizer":
+        tokens = ['<START>', *sorted(set(text))]
 
-        for token in tokens:
-            if token not in self.vocabulary:
-                self.vocabulary[token] = len(self.vocabulary)
+        token_to_id = {
+            token: id
+            for id, token in enumerate(tokens)
+        }
 
-        return self
+        return cls(token_to_id)
 
     def encode(self, text: str) -> list[int]:
-        tokens = [char for char in text]
-        token_ids = []
-        for token in tokens:
-            if token not in self.vocabulary:
-                raise ValueError(f"Unrecognized token {token}")
-            
-            token_ids.append(self.vocabulary[token])
-
-        return token_ids
+        try:
+            return [self.token_to_id[token] for token in text]
+        except KeyError as error:
+            raise ValueError(f"Unrecognized token {error.args[0]!r}") from error
     
     def decode(self, ids: list[int]) -> str:
-        tokens = []
-        for id in ids:
-            id_found = False
-            for key, value in self.vocabulary.items():
-               if id == value:
-                   tokens.append(key)
-                   id_found = True 
-
-            if not id_found:
-               raise ValueError(f"Unrecognized id {id}")
-            
-        return "".join(tokens)
+        try:
+            return "".join(self.id_to_token[id] for id in ids)
+        except KeyError as error:
+            raise ValueError(f"Unrecognized id {error.args[0]}") from error
            
   
 if __name__ == "__main__":
-    tokenizer = Tokenizer()
+    tokenizer = Tokenizer.from_text("hello")
 
-    tokenizer.from_text("hello")
+    ids = tokenizer.encode("hello")
+    text = tokenizer.decode(ids)
+
+    print(ids)
+    print(text)
