@@ -21,8 +21,8 @@ class Tokenizer:
         tokens = ['<START>', *sorted(set(text))]
 
         token_to_id = {
-            token: id
-            for id, token in enumerate(tokens)
+            token: token_id
+            for token_id, token in enumerate(tokens)
         }
 
         return cls(token_to_id)
