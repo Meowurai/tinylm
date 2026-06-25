@@ -1,4 +1,4 @@
-from tinylm.dataset_builder import build_examples
+from tinylm.dataset import build_examples
 from tinylm.tokenizer import Tokenizer
 
 def test_build_examples_from_hello():
