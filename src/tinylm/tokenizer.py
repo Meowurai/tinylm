@@ -41,7 +41,7 @@ class Tokenizer:
             
         return "".join(tokens)
            
-            
+  
 if __name__ == "__main__":
     tokenizer = Tokenizer()
 
