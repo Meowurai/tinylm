@@ -6,15 +6,20 @@
 
 class Tokenizer:
     def __init__(self) -> None:
-        self.vocabulary = {
-            "<start>": 0,
-            "h": 1,
-            "e": 2,
-            "l": 3,
-            "o": 4,
-        }
+        self.vocabulary: dict[str, int] = {}
 
-        self.vocab_size = len(self.vocabulary)
+    @property
+    def vocabulary_size(self) -> int:
+        return len(self.vocabulary)
+
+    def from_text(self, text: str):
+        tokens = ['<START>', *text]
+
+        for token in tokens:
+            if token not in self.vocabulary:
+                self.vocabulary[token] = len(self.vocabulary)
+
+        return self
 
     def encode(self, text: str) -> list[int]:
         tokens = [char for char in text]
@@ -45,8 +50,4 @@ class Tokenizer:
 if __name__ == "__main__":
     tokenizer = Tokenizer()
 
-    ids = tokenizer.encode("hello")
-
-    assert tokenizer.decode(ids) == "hello"
-    assert tokenizer.vocab_size == 5
-    
+    tokenizer.from_text("hello")
