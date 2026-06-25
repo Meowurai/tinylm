@@ -1,6 +1,7 @@
 # tests/test_count_model.py
 
-from tinylm.count_model import CountLanguageModel
+import pytest
+from tinylm.count_model import CountLanguageModel, sample_from_probabilities
 
 
 def test_fit_counts_repeated_context_target():
@@ -70,3 +71,10 @@ def test_predict_probabilities_unknown_context():
     ])
 
     assert model.predict_probabilities([4, 1]) == {}
+
+def test_sampling_single_option_returns_that_option():
+    assert sample_from_probabilities({2: 1.0}) == 2
+
+def test_sampling_empty_probabilities_fails():
+    with pytest.raises(ValueError):
+        sample_from_probabilities({})

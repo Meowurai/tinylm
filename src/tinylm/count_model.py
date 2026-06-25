@@ -3,6 +3,26 @@
 # The count language model's job is to learn how often each target
 # follows each context, then expose those counts for prediction.
 
+import random
+
+def sample_from_probabilities(probabilities: dict[int, float]) -> int:
+    r = random.random()
+    cumulative = 0.0
+    last_token_id = None
+
+    for token_id, probability in probabilities.items():
+        cumulative += probability
+
+        if r < cumulative:
+            return token_id
+        
+        last_token_id = token_id
+        
+    if last_token_id is None:
+        raise ValueError("Cannot sample from empty probabilities")
+
+    return last_token_id
+
 class CountLanguageModel:
     def __init__(self) -> None:
         self.next_token_count: dict[tuple[int, ...], dict[int, int]] = {}
@@ -26,7 +46,7 @@ class CountLanguageModel:
         total_count = sum(counts.values())
 
         return {
-            key: value / total_count        # predict count can't be empty so no need to handle zero div
+            key: value / total_count
             for key, value in counts.items()
         }
 
