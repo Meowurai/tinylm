@@ -3,6 +3,8 @@ import random
 from tinylm.encoding import one_hot
 from tinylm.activations import softmax
 
+
+
 class LanguageModel:
     """
     Learns a function that maps a fixed-size context
