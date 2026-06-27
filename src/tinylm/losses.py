@@ -1,8 +1,7 @@
 # src/tinylm/losses.py
 
-import math
+from tinylm.autograd import Value
 
-def cross_entropy(probabilities: list[float], target: int) -> float:
-    EPSILON = 1e-12
-    return -math.log(max(probabilities[target], EPSILON))
+def cross_entropy(probabilities: list[Value], target: int) -> Value:
+    return Value(-1.0) * probabilities[target].log()
 

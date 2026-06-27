@@ -2,7 +2,7 @@ import random
 
 from tinylm.encoding import one_hot
 from tinylm.activations import softmax
-
+from tinylm.autograd import Value
 
 
 class LanguageModel:
@@ -16,15 +16,15 @@ class LanguageModel:
         self.input_size = context_size * vocab_size
         # Small random initialization.
         self.weights = [
-            [random.uniform(-0.1, 0.1) for _ in range(self.input_size)] 
+            [Value(random.uniform(-0.1, 0.1)) for _ in range(self.input_size)] 
             for _ in range(vocab_size)]
         
         self.bias = [
-            random.uniform(-0.1, 0.1)
+            Value(random.uniform(-0.1, 0.1))
             for _ in range(vocab_size)
         ]
 
-    def predict_logits(self, context: list[int]) -> list[float]:
+    def predict_logits(self, context: list[int]) -> list[Value]:
         encoded_tokens = [one_hot(token_id, self.vocab_size) for token_id in context]
 
         flat_encoded = []
@@ -34,16 +34,16 @@ class LanguageModel:
 
         logits = []
         for output_index, neuron_weights in enumerate(self.weights):
-            weighted_sum = 0.0
+            weighted_sum = Value(0.0)
             for input_value, weight in zip(flat_encoded, neuron_weights):
-                weighted_sum += input_value * weight
+                weighted_sum += weight * Value(float(input_value))
 
             logit = weighted_sum + self.bias[output_index]
             logits.append(logit)
 
         return logits
     
-    def predict_probabilities(self, context: list[int]) -> list[float]:
+    def predict_probabilities(self, context: list[int]) -> list[Value]:
         logits = self.predict_logits(context)
         probabilities = softmax(logits)
         return probabilities

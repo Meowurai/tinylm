@@ -4,11 +4,13 @@
 # raw model outputs into useful numerical representations.
 # For now, softmax turns logits into probabilities.
 
-import math
+from tinylm.autograd import Value
 
-def softmax(logits: list[int|float]) -> list[float]:
-    max_logit = max(logits) # too handle large logits
-    weights = [math.exp(logit - max_logit) for logit in logits]
-    total_weight = sum(weights)
+def softmax(logits: list[Value]) -> list[Value]:
+    max_logit = max(logit.data for logit in logits)
+    weights = [logit.exp() for logit in logits]
+    total_weight = weights[0]
+    for weight in weights[1:]:
+        total_weight += weight
 
     return [weight / total_weight for weight in weights]
