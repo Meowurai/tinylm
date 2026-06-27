@@ -10,6 +10,29 @@ def print_prediction(model: LanguageModel, tokenizer: Tokenizer, context: list[i
         token = tokenizer.id_to_token[token_id]
         print(f"{token!r}: {probability.data:.4f}")
 
+def generate_ids(
+    model: LanguageModel,
+    start_id: int,
+    context_size: int,
+    max_new_tokens: int,
+) -> list[int]:
+    context = [start_id] * context_size
+    generated = []
+
+    for _ in range(max_new_tokens):
+        probabilities = model.predict_probabilities(context)
+
+        # greedy decoding, pick highest probability
+        next_id = max(
+            range(len(probabilities)),
+            key=lambda token_id: probabilities[token_id].data,
+        )
+
+        generated.append(next_id)
+        context = context[1:] + [next_id]
+    
+    return generated
+
 def main() -> None:
     text = "hello"
 
@@ -62,6 +85,18 @@ def main() -> None:
         print(f"context={context} target={target_token!r}")
         print_prediction(model, tokenizer, context)
         print()
+
+    generated_ids = generate_ids(
+        model=model,
+        start_id=tokenizer.token_to_id["<START>"],
+        context_size=context_size,
+        max_new_tokens=len(text),
+    )
+
+    generated_text = tokenizer.decode(generated_ids)
+
+    print("Generated ids:", generated_ids)
+    print("Generated text:", generated_text)
 
 if __name__ == "__main__":
     main()
