@@ -80,3 +80,34 @@ def test_log_backward():
     y._backward()
 
     assert x.grad == 1 / 2.0
+
+
+def test_backward_add():
+    x = Value(2.0)
+    y = Value(3.0)
+
+    z = x + y
+    z.backward()
+
+    assert x.grad == 1.0
+    assert y.grad == 1.0
+    assert z.grad == 1.0
+
+def test_backward_multiply():
+    x = Value(2.0)
+    y = Value(3.0)
+
+    z = x * y 
+    z.backward()
+
+    assert x.grad == 3.0
+    assert y.grad == 2.0
+    assert z.grad == 1.0 
+
+def test_backward_shared_node_accumulates_gradient():
+    x = Value(2.0)
+
+    y = x * x
+    y.backward()
+
+    assert x.grad == 4.0
