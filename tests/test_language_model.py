@@ -14,3 +14,8 @@ def test_langugage_model_probabilities_sum_to_one():
     probabilities = model.predict_probabilities([0, 0, 2, 1])
 
     assert abs(sum([probability.data for probability in probabilities]) - 1.0) < 1e-9
+
+def test_language_model_exposes_all_parameters():
+    model = LanguageModel(context_size=4, vocab_size=5)
+
+    assert len(model.parameters()) == 105

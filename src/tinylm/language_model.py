@@ -24,6 +24,17 @@ class LanguageModel:
             for _ in range(vocab_size)
         ]
 
+    def parameters(self) -> list[Value]:
+        return [
+            weight 
+            for row in self.weights
+            for weight in row
+        ] + self.bias
+    
+    def zero_grad(self):
+        for param in self.parameters():
+            param.grad = 0.0
+    
     def predict_logits(self, context: list[int]) -> list[Value]:
         encoded_tokens = [one_hot(token_id, self.vocab_size) for token_id in context]
 
