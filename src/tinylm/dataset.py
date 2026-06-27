@@ -10,7 +10,6 @@ def build_examples(
 ) -> list[tuple[list[int], int]]:
     context = [start_id] * context_size
     examples = []
-    print(f"next context: {context}")
     for target in ids:
         example = (context, target)
         examples.append(example)
