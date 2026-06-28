@@ -204,4 +204,63 @@ Gradient Descent
 
 ### Current Status
 
-The model successfully trains on a small corpus, the loss decreases during training, and it correctly generates the learned sequence (`"hello"`) after training.
+The model successfully trains on a small corpus, the loss decreases during training, and it correctly generates the learned sequence (`"hello"`).
+
+## Stage 4: Multi-Layer Perceptron (MLP)
+
+The single linear layer was replaced with a two-layer neural network separated by a non-linear activation function. This allows the model to learn relationships that cannot be represented by a purely linear transformation.
+
+### Architecture
+
+```
+Context
+    │
+    ▼
+Embedding Lookup
+    │
+    ▼
+Flatten
+    │
+    ▼
+Linear Layer
+    │
+    ▼
+Tanh
+    │
+    ▼
+Linear Layer
+    │
+    ▼
+Logits
+    │
+    ▼
+Softmax
+    │
+    ▼
+Cross-Entropy Loss
+    │
+    ▼
+Gradient Descent
+```
+
+### Components
+
+- **EmbeddingTable**
+  - Stores one learned embedding vector for every token.
+- **Linear**
+  - Reusable linear transformation used for both the hidden and output layers.
+- **Tanh**
+  - Introduces non-linearity between the two linear layers.
+- **LanguageModel**
+  - Composes the embedding table, hidden layer, activation function, and output layer.
+
+### Key Concepts Learned
+
+- Stacking linear layers alone does not increase model capacity.
+- Non-linear activation functions allow the network to learn more complex relationships.
+- Extracting a reusable `Linear` layer simplifies the overall architecture.
+- The language model becomes a composition of reusable building blocks.
+
+### Current Status
+
+The MLP model successfully trains end-to-end, the loss converges during training, and the trained model correctly generates the learned sequence (`"hello"`).
