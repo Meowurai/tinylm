@@ -1,8 +1,10 @@
 import random
 
-from tinylm.encoding import one_hot
+from itertools import chain
+
 from tinylm.activations import softmax
 from tinylm.autograd import Value
+from tinylm.embeddings import EmbeddingTable
 
 
 class LanguageModel:
@@ -10,11 +12,13 @@ class LanguageModel:
     Learns a function that maps a fixed-size context
     to logits over the vocabulary.
     """
-    def __init__(self, context_size: int, vocab_size: int) -> None:
+    def __init__(self, context_size: int, vocab_size: int, embedding_size: int) -> None:
         self.context_size = context_size
         self.vocab_size = vocab_size
-        self.input_size = context_size * vocab_size
-        # Small random initialization.
+
+        self.embedding_table = EmbeddingTable(vocab_size, embedding_size)
+        self.input_size = context_size * embedding_size
+
         self.weights = [
             [Value(random.uniform(-0.1, 0.1)) for _ in range(self.input_size)] 
             for _ in range(vocab_size)]
@@ -25,29 +29,34 @@ class LanguageModel:
         ]
 
     def parameters(self) -> list[Value]:
-        return [
-            weight 
-            for row in self.weights
-            for weight in row
-        ] + self.bias
+        return (
+            self.embedding_table.parameters()
+            + [
+                weight 
+                for row in self.weights
+                for weight in row
+            ] + self.bias
+        )
     
     def zero_grad(self):
         for param in self.parameters():
             param.grad = 0.0
     
     def predict_logits(self, context: list[int]) -> list[Value]:
-        encoded_tokens = [one_hot(token_id, self.vocab_size) for token_id in context]
+        # Extract and flatten embedding vectors
+        embedding_vectors = list(
+            chain.from_iterable(
+                self.embedding_table.lookup(token_id)
+                for token_id in context
+            )
+        )
 
-        flat_encoded = []
-        for encoded in encoded_tokens:
-            for value in encoded:
-                flat_encoded.append(value)
-
+        # predict logits
         logits = []
-        for output_index, neuron_weights in enumerate(self.weights):
+        for output_index, weights in enumerate(self.weights):
             weighted_sum = Value(0.0)
-            for input_value, weight in zip(flat_encoded, neuron_weights):
-                weighted_sum += weight * Value(float(input_value))
+            for input_value, weight in zip(embedding_vectors, weights):
+                weighted_sum += weight * input_value
 
             logit = weighted_sum + self.bias[output_index]
             logits.append(logit)
