@@ -84,3 +84,124 @@ Generated Text
 - The model cannot predict unseen contexts.
 - The vocabulary is fixed after training.
 - Generation currently has no explicit end-of-sequence token, revealing the need for an `<END>` token in the next iteration.
+
+## Stage 2: Neural Language Model
+
+The count table was replaced with a learnable neural network. Rather than memorizing counts, the model learns a function that maps a context to a probability distribution over the next token.
+
+### Architecture
+
+```
+Raw text
+    │
+    ▼
+Tokenizer
+    │
+    ▼
+Token IDs
+    │
+    ▼
+Dataset Builder
+    │
+    ▼
+(Context, Target) Training Examples
+    │
+    ▼
+One-Hot Encoding
+    │
+    ▼
+Flatten
+    │
+    ▼
+Linear Layer
+    │
+    ▼
+Logits
+    │
+    ▼
+Softmax
+    │
+    ▼
+Probability Distribution
+    │
+    ▼
+Cross-Entropy Loss
+    │
+    ▼
+Reverse-Mode Autodiff
+    │
+    ▼
+Gradient Descent
+```
+
+### Components
+
+- **LanguageModel**
+  - Maps a fixed-size context to logits.
+  - Owns learnable weights and biases.
+- **Softmax**
+  - Converts logits into a probability distribution.
+- **Cross-Entropy Loss**
+  - Measures how much probability the model assigned to the correct next token.
+- **Autograd**
+  - Tracks computations and propagates gradients through the computation graph.
+- **Training Loop**
+  - Performs forward pass, loss computation, backpropagation, and parameter updates.
+
+### Key Concepts Learned
+
+- A count table can be replaced by a learnable function.
+- Logits represent unnormalized preferences over the vocabulary.
+- Softmax converts logits into probabilities.
+- Cross-entropy provides a learning signal based on the probability assigned to the correct token.
+- Reverse-mode autodiff computes gradients automatically.
+- Gradient descent updates parameters to reduce loss.
+
+### Limitations Discovered
+
+- One-hot vectors cannot express similarity between tokens.
+- Input dimensionality grows with vocabulary size.
+- The model is still purely linear.
+
+## Stage 3: Embeddings
+
+One-hot vectors were replaced with learned embeddings. Instead of representing each token as a sparse identity vector, every token now owns a learned dense vector that is optimized together with the rest of the model.
+
+### Architecture
+
+```
+Context
+    │
+    ▼
+Embedding Lookup
+    │
+    ▼
+Flatten
+    │
+    ▼
+Linear Layer
+    │
+    ▼
+Logits
+    │
+    ▼
+Softmax
+    │
+    ▼
+Cross-Entropy Loss
+    │
+    ▼
+Gradient Descent
+```
+
+### Key Concepts Learned
+
+- Embeddings are simply learnable parameter vectors.
+- An embedding table is a lookup table indexed by token ID.
+- Embeddings reduce the input dimensionality from `context_size × vocabulary_size` to `context_size × embedding_size`.
+- Embeddings are trained jointly with the language model.
+- The overall training pipeline remains unchanged; only the input representation changes.
+
+### Current Status
+
+The model successfully trains on a small corpus, the loss decreases during training, and it correctly generates the learned sequence (`"hello"`) after training.
