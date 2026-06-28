@@ -1,12 +1,23 @@
 # TinyLM 
 
+> **Status:** ✅ Complete
+
 A learning lab for teaching myself to build a character-level language model from scratch.
 
-## Desired Outcome
+## Outcome
 
-By the end of this project, I want to understand not just how a character-level language model works, but why every major component exists and how the architecture naturally emerges from the problem.
+This project achieved its original goal: building a character-level language model from first principles while understanding why each major component exists and how the architecture naturally evolves from the problem.
 
 ## Progress
+
+TinyLM is complete and consists of four progressively more capable implementations:
+
+- ✅ Stage 1 — Count-Based Language Model
+- ✅ Stage 2 — Linear Neural Language Model
+- ✅ Stage 3 — Embeddings
+- ✅ Stage 4 — Multi-Layer Perceptron (MLP)
+
+Each stage introduces exactly one new architectural idea while preserving everything learned previously.
 
 ### Stage 1: Count-Based Language Model 
 
@@ -264,3 +275,9 @@ Gradient Descent
 ### Current Status
 
 The MLP model successfully trains end-to-end, the loss converges during training, and the trained model correctly generates the learned sequence (`"hello"`).
+
+## Conclusion
+
+TinyLM is intentionally complete.
+
+Rather than continuing to add transformer components to this repository, the next project starts from a clean slate and builds a transformer architecture from first principles. TinyLM serves as the conceptual foundation for that journey by establishing the progression from memorization, to learning, to representation learning, to deep neural networks.
