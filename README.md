@@ -1,6 +1,6 @@
 # TinyLM 
 
-> **Status:** ✅ Complete
+ > ✓ **Status:** Complete
 
 A learning lab for teaching myself to build a character-level language model from scratch.
 
@@ -12,10 +12,10 @@ This project achieved its original goal: building a character-level language mod
 
 TinyLM is complete and consists of four progressively more capable implementations:
 
-- ✅ Stage 1 — Count-Based Language Model
-- ✅ Stage 2 — Linear Neural Language Model
-- ✅ Stage 3 — Embeddings
-- ✅ Stage 4 — Multi-Layer Perceptron (MLP)
+- Stage 1 — Count-Based Language Model
+- Stage 2 — Linear Neural Language Model
+- Stage 3 — Embeddings
+- Stage 4 — Multi-Layer Perceptron (MLP)
 
 Each stage introduces exactly one new architectural idea while preserving everything learned previously.
 
@@ -213,9 +213,10 @@ Gradient Descent
 - Embeddings are trained jointly with the language model.
 - The overall training pipeline remains unchanged; only the input representation changes.
 
-### Current Status
+### Limitations Discovered
 
-The model successfully trains on a small corpus, the loss decreases during training, and it correctly generates the learned sequence (`"hello"`).
+- The model is still fundamentally a linear model.
+- More expressive relationships require a non-linear hidden layer.
 
 ## Stage 4: Multi-Layer Perceptron (MLP)
 
@@ -272,7 +273,7 @@ Gradient Descent
 - Extracting a reusable `Linear` layer simplifies the overall architecture.
 - The language model becomes a composition of reusable building blocks.
 
-### Current Status
+### Outcome
 
 The MLP model successfully trains end-to-end, the loss converges during training, and the trained model correctly generates the learned sequence (`"hello"`).
 
@@ -280,4 +281,14 @@ The MLP model successfully trains end-to-end, the loss converges during training
 
 TinyLM is intentionally complete.
 
-Rather than continuing to add transformer components to this repository, the next project starts from a clean slate and builds a transformer architecture from first principles. TinyLM serves as the conceptual foundation for that journey by establishing the progression from memorization, to learning, to representation learning, to deep neural networks.
+Its purpose was to understand how a language model evolves from memorization to learning by introducing one architectural idea at a time.
+
+By the end of the project, the following questions have been answered:
+
+- How does a count-based language model work?
+- How can memorization be replaced by a learnable neural network?
+- Why do embeddings replace one-hot vectors?
+- Why are non-linear activation functions necessary?
+- How do gradient descent and backpropagation train a language model?
+
+This project intentionally stops before transformers. The next project starts from a clean slate to build a transformer architecture from first principles, using TinyLM as the conceptual foundation rather than extending it further.
