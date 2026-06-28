@@ -87,6 +87,16 @@ class Value:
 
         return out
     
+    def tanh(self) -> Value:
+        out = Value(math.tanh(self.data), (self,), "tanh")
+
+        def _backward():
+            self.grad += (1 - out.data ** 2) * out.grad
+
+        out._backward = _backward
+
+        return out
+    
     def backward(self):
         """
         Backward start from this Value and propagates gradients

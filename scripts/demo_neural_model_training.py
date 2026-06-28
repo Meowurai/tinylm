@@ -52,7 +52,8 @@ def main() -> None:
     model = LanguageModel(
         context_size=context_size,
         vocab_size=tokenizer.vocabulary_size,
-        embedding_size=3
+        embedding_size=3,
+        hidden_size=8
     )
 
     print("\nBefore training:")
